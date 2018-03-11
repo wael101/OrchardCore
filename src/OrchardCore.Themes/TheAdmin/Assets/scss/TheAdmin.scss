@@ -5,8 +5,8 @@
 
 @import "src/OrchardCore.Modules/OrchardCore.Resources/Assets/Bootstrap/scss/bootstrap.scss";
 
-$top-nav-height: 59px;
-$left-navigation-width: 260px;
+$top-nav-height: 70px;
+$left-navigation-width: 300px;
 $border-content: 1px solid rgba(0, 0, 0, 0.05);
 $link-padding-left: 16px !default;
 
@@ -32,6 +32,7 @@ $link-padding-left: 16px !default;
         min-height: $top-nav-height;
         border-bottom: $border-content;
         z-index: 8;
+        left: $left-navigation-width;
     }
 
     .ta-navbar-brand {
@@ -56,13 +57,20 @@ $link-padding-left: 16px !default;
         top: 0;
         bottom: 0;
         color: $gray-800;
-        border-right: $border-content;
         left: 0px;
         transition: left 0.5s ease-in-out;
+        -webkit-box-shadow: 10px 0px 61px -6px rgba(0,0,0,0.2);
+        -moz-box-shadow: 10px 0px 61px -6px rgba(0,0,0,0.2);
+        box-shadow: 10px 0px 61px -6px rgba(0,0,0,0.2);
+
+        .header {
+            height: $top-nav-height;
+            width: 100%;
+            background-color: #FFF;
+        }
 
         #left-nav {
             position: relative;
-            margin-top: $top-nav-height;
             height: calc(100% - #{$top-nav-height});
         }
         // Remove padding/margin from all uls
@@ -185,8 +193,28 @@ $link-padding-left: 16px !default;
     }
 
     .ta-content {
-        padding: ($grid-gutter-width / 2);
+        padding: ($grid-gutter-width + 10) ($grid-gutter-width * 2);
         margin-top: ($top-nav-height);
+        background: rgb(234,235,240); /* Old browsers */
+        background: -moz-linear-gradient(-45deg, rgba(234,235,240,1) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(-45deg, rgba(234,235,240,1) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(135deg, rgba(234,235,240,1) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaebf0', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+        border-left: 1px solid #EAEBEF;
+        min-height: calc(100% - #{$top-nav-height});
+        position: absolute;
+        width: calc(100% - #{$left-navigation-width});
+
+        .card {
+            border: 0;
+            border-radius: .1875rem;
+            display: inline-block;
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 15px 1px rgba(39,39,39,.1);
+            padding: 20px;
+        }
     }
     // When the screen is bigger than md, add a margin of the size of the menu
     @include media-breakpoint-up(sm) {
@@ -205,6 +233,7 @@ $link-padding-left: 16px !default;
         .ta-content {
             margin-left: 0;
             transition: margin-left 0.5s ease-in-out;
+            width: 100%;
         }
     }
 }

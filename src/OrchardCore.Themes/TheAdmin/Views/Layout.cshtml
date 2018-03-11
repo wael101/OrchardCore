@@ -1,6 +1,6 @@
-﻿@inject OrchardCore.Settings.ISiteService SiteService
+@inject OrchardCore.Settings.ISiteService SiteService
 @{
-        var site = await SiteService.GetSiteSettingsAsync();
+    var site = await SiteService.GetSiteSettingsAsync();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +25,6 @@
 <body>
     <div class="ta-wrapper">
         <div class="ta-navbar-top">
-            <a class="navbar-brand" href="@Url.Content("~/")">@site.SiteName</a>
             <button id="navbar-toggler" type="button" data-toggle="collapse" aria-controls="ta-left-sidebar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -45,13 +44,19 @@
         </div>
 
         <div id="ta-left-sidebar">
+            <div class="header">
+                <img src="/TheAdmin/Styles/images/logo.png" />
+            </div>
             @await RenderSectionAsync("Navigation", required: false)
         </div>
 
         <div class="ta-content">
+            
             @await RenderSectionAsync("Messages", required: false)
 
-            @await RenderBodyAsync()
+            <div class="card">
+                @await RenderBodyAsync()
+            </div>
         </div>
 
     </div><!-- /.ta-wrapper -->

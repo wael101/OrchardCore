@@ -6215,26 +6215,32 @@ a.text-dark:hover, a.text-dark:focus {
         @extend .hidden-xs-down;
     }*/ }
   .ta-wrapper .ta-navbar-top {
-    min-height: 59px;
+    min-height: 70px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    z-index: 8; }
+    z-index: 8;
+    left: 300px; }
   .ta-wrapper .ta-navbar-brand {
     margin-left: 4px; }
   .ta-wrapper #ta-left-sidebar {
-    width: 260px;
+    width: 300px;
     height: 100%;
     z-index: 7;
     position: fixed;
     top: 0;
     bottom: 0;
     color: #343a40;
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
     left: 0px;
-    transition: left 0.5s ease-in-out; }
+    transition: left 0.5s ease-in-out;
+    -webkit-box-shadow: 10px 0px 61px -6px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 10px 0px 61px -6px rgba(0, 0, 0, 0.2);
+    box-shadow: 10px 0px 61px -6px rgba(0, 0, 0, 0.2); }
+    .ta-wrapper #ta-left-sidebar .header {
+      height: 70px;
+      width: 100%;
+      background-color: #FFF; }
     .ta-wrapper #ta-left-sidebar #left-nav {
       position: relative;
-      margin-top: 59px;
-      height: calc(100% - 59px); }
+      height: calc(100% - 70px); }
     .ta-wrapper #ta-left-sidebar ul {
       margin: 0;
       padding: 0; }
@@ -6307,19 +6313,43 @@ a.text-dark:hover, a.text-dark:focus {
     .ta-wrapper #ta-left-sidebar li ul > li ul > .active > a {
       padding-left: 44px !important; }
   .ta-wrapper .ta-content {
-    padding: 15px;
-    margin-top: 59px; }
+    padding: 40px 60px;
+    margin-top: 70px;
+    background: #eaebf0;
+    /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #eaebf0 0%, white 100%);
+    /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #eaebf0 0%, white 100%);
+    /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #eaebf0 0%, white 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaebf0', endColorstr='#ffffff',GradientType=1 );
+    /* IE6-9 fallback on horizontal gradient */
+    border-left: 1px solid #EAEBEF;
+    min-height: calc(100% - 70px);
+    position: absolute;
+    width: calc(100% - 300px); }
+    .ta-wrapper .ta-content .card {
+      border: 0;
+      border-radius: .1875rem;
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
+      padding: 20px; }
   @media (min-width: 576px) {
     .ta-wrapper .ta-content {
-      margin-left: 260px;
+      margin-left: 300px;
       transition: margin-left 0.5s ease-in-out; } }
   @media (max-width: 767.98px) {
     .ta-wrapper #ta-left-sidebar {
-      left: -260px;
+      left: -300px;
       transition: left 0.5s ease-in-out; }
     .ta-wrapper .ta-content {
       margin-left: 0;
-      transition: margin-left 0.5s ease-in-out; } }
+      transition: margin-left 0.5s ease-in-out;
+      width: 100%; } }
 
 .hint {
   overflow-wrap: break-word;
