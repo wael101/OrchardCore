@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.DataProtection;
+using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.DisplayManagement.ModelBinding;
 using OrchardCore.DisplayManagement.Views;
 using OrchardCore.Email.Services;
@@ -12,7 +13,7 @@ namespace OrchardCore.Email.Drivers
 {
     public class SmtpSettingsDisplayDriver : SectionDisplayDriver<ISite, SmtpSettings>
     {
-        public const string GroupId = "SmtpSettings";
+        public const string GroupId = "smtp";
         private readonly IDataProtectionProvider _dataProtectionProvider;
         private readonly IShellHost _orchardHost;
         private readonly ShellSettings _currentShellSettings;
@@ -24,11 +25,11 @@ namespace OrchardCore.Email.Drivers
             _currentShellSettings = currentShellSettings;
         }
 
-        public override IDisplayResult Edit(SmtpSettings section)
+        public override IDisplayResult Edit(SmtpSettings section, BuildEditorContext context)
         {
             var shapes = new List<IDisplayResult>
             {
-                Shape<SmtpSettings>("SmtpSettings_Edit", model =>
+                Initialize<SmtpSettings>("SmtpSettings_Edit", model =>
                 {
                     model.DefaultSender = section.DefaultSender;
                     model.DeliveryMethod = section.DeliveryMethod;
@@ -45,7 +46,7 @@ namespace OrchardCore.Email.Drivers
 
             if (section?.DefaultSender != null)
             {
-                shapes.Add(Shape("SmtpSettings_TestButton").Location("Actions").OnGroup(GroupId));
+                shapes.Add(Dynamic("SmtpSettings_TestButton").Location("Actions").OnGroup(GroupId));
             }
 
             return Combine(shapes);
