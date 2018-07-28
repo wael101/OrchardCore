@@ -4,8 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using OrchardCore.DeferredTasks;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Models;
 
 namespace OrchardCore.Modules
 {
@@ -36,17 +38,25 @@ namespace OrchardCore.Modules
 
             var shellSettings = _runningShellTable.Match(httpContext);
 
-            // Register the shell settings as a custom feature.
-            httpContext.Features.Set(shellSettings);
-
             // We only serve the next request if the tenant has been resolved.
             if (shellSettings != null)
             {
+                if (shellSettings.State == TenantState.Initializing)
+                {
+                    httpContext.Response.Headers.Add(HeaderNames.RetryAfter, "10");
+                    httpContext.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                    await httpContext.Response.WriteAsync("The requested tenant is currently initializing.");
+                    return;
+                }
+
                 var shellContext = _orchardHost.GetOrCreateShellContext(shellSettings);
 
                 var hasPendingTasks = false;
                 using (var scope = shellContext.EnterServiceScope())
                 {
+                    // Register the shell context as a custom feature.
+                    httpContext.Features.Set(shellContext);
+
                     if (!shellContext.IsActivated)
                     {
                         var semaphore = _semaphores.GetOrAdd(shellSettings.Name, (name) => new SemaphoreSlim(1));
@@ -80,12 +90,12 @@ namespace OrchardCore.Modules
                             }
                         }
                         finally
-                        {                            
+                        {
                             semaphore.Release();
                             _semaphores.TryRemove(shellSettings.Name, out semaphore);
                         }
                     }
-                    
+
                     await _next.Invoke(httpContext);
                     var deferredTaskEngine = scope.ServiceProvider.GetService<IDeferredTaskEngine>();
                     hasPendingTasks = deferredTaskEngine?.HasPendingTasks ?? false;

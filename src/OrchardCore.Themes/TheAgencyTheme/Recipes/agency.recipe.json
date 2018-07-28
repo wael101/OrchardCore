@@ -21,13 +21,8 @@
       "disable": [],
       "enable": [
         // SaaS
-        "OrchardCore.Antiforgery",
-        "OrchardCore.Authentication",
-        "OrchardCore.DataProtection",
-        "OrchardCore.Mvc",
         "OrchardCore.HomeRoute",
         "OrchardCore.Admin",
-        "OrchardCore.Commons",
         "OrchardCore.Diagnostics",
         "OrchardCore.DynamicCache",
         "OrchardCore.Features",
@@ -42,7 +37,7 @@
         // Content Management
         "OrchardCore.Alias",
         "OrchardCore.Autoroute",
-        "OrchardCore.Body",
+        "OrchardCore.Html",
         "OrchardCore.ContentFields",
         "OrchardCore.ContentPreview",
         "OrchardCore.Contents",
@@ -383,8 +378,8 @@
               }
             },
             {
-              "PartName": "BodyPart",
-              "Name": "BodyPart",
+              "PartName": "HtmlBodyPart",
+              "Name": "HtmlBodyPart",
               "Settings": {
                 "Position": "1"
               }
@@ -410,8 +405,8 @@
               }
             },
             {
-              "PartName": "BodyPart",
-              "Name": "BodyPart",
+              "PartName": "HtmlBodyPart",
+              "Name": "HtmlBodyPart",
               "Settings": {
                 "Position": "1"
               }
@@ -437,8 +432,8 @@
               }
             },
             {
-              "PartName": "BodyPart",
-              "Name": "BodyPart",
+              "PartName": "HtmlBodyPart",
+              "Name": "HtmlBodyPart",
               "Settings": {
                 "Position": "2"
               }
@@ -1165,8 +1160,8 @@
           "ModifiedUtc": "2017-08-16T00:32:59.1057293Z",
           "PublishedUtc": "2017-08-16T00:32:59.1287452Z",
           "CreatedUtc": "2017-08-16T00:32:59.1287452Z",
-          "Owner": null,
-          "Author": null,
+          "Owner": "[js: parameters('AdminUsername')]",
+          "Author": "[js: parameters('AdminUsername')]",
           "MenuPart": {},
           "TitlePart": {
             "Title": "Main Menu"
@@ -1228,8 +1223,8 @@
           "ModifiedUtc": "2017-08-16T23:21:36.8836967Z",
           "PublishedUtc": "2017-08-16T23:21:37.1612415Z",
           "CreatedUtc": "2017-08-16T00:49:29.6251921Z",
-          "Owner": null,
-          "Author": "admin",
+          "Owner": "[js: parameters('AdminUsername')]",
+          "Author": "[js: parameters('AdminUsername')]",
           "LandingPage": {},
           "AutoroutePart": {
             "Path": "home-page",
@@ -1250,14 +1245,14 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Service": {
                   "IconClass": {
                     "Text": "fa-shopping-cart"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
                 },
                 "TitlePart": {
                   "Title": "E-Commerce"
@@ -1273,14 +1268,14 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Service": {
                   "IconClass": {
                     "Text": "fa-laptop"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
                 },
                 "TitlePart": {
                   "Title": "Responsive Design"
@@ -1296,14 +1291,14 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Service": {
                   "IconClass": {
                     "Text": "fa-lock"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit."
                 },
                 "TitlePart": {
                   "Title": "Web Security"
@@ -1323,7 +1318,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1334,8 +1329,8 @@
                     "Text": "Illustrations"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Threads"
@@ -1351,7 +1346,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1362,8 +1357,8 @@
                     "Text": "Graphic Design"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Explore"
@@ -1379,7 +1374,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1390,8 +1385,8 @@
                     "Text": "Identity"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Finish"
@@ -1407,7 +1402,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1418,8 +1413,8 @@
                     "Text": "Branding"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Lines"
@@ -1435,7 +1430,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1446,8 +1441,8 @@
                     "Text": "Web Design"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Southwest"
@@ -1463,7 +1458,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Project": {
                   "Image": {
                     "Paths": [
@@ -1474,8 +1469,8 @@
                     "Text": "Photography"
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!"
                 },
                 "TitlePart": {
                   "Title": "Window"
@@ -1495,7 +1490,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Milestone": {
                   "Date": {
                     "Text": "2009-2011"
@@ -1506,8 +1501,8 @@
                     ]
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!"
                 },
                 "TitlePart": {
                   "Title": "Our Humble Beginnings"
@@ -1523,7 +1518,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Milestone": {
                   "Date": {
                     "Text": "MARCH 2011"
@@ -1534,8 +1529,8 @@
                     ]
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!\r\n"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!\r\n"
                 },
                 "TitlePart": {
                   "Title": "An Agency is Born"
@@ -1551,7 +1546,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Milestone": {
                   "Date": {
                     "Text": "DECEMBER 2012"
@@ -1562,8 +1557,8 @@
                     ]
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!"
                 },
                 "TitlePart": {
                   "Title": "Transition to Full Service"
@@ -1579,7 +1574,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Milestone": {
                   "Date": {
                     "Text": "JULY 2014"
@@ -1590,8 +1585,8 @@
                     ]
                   }
                 },
-                "BodyPart": {
-                  "Body": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!\r\n"
+                "HtmlBodyPart": {
+                  "Html": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!\r\n"
                 },
                 "TitlePart": {
                   "Title": "Phase Two Expansion"
@@ -1611,7 +1606,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "TeamMember": {
                   "Occupation": {
                     "Text": "Lead Designer"
@@ -1645,7 +1640,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "TeamMember": {
                   "Occupation": {
                     "Text": "Lead Marketer"
@@ -1679,7 +1674,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "TeamMember": {
                   "Occupation": {
                     "Text": "Lead Developer"
@@ -1717,7 +1712,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Client": {
                   "Logo": {
                     "Paths": [
@@ -1742,7 +1737,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Client": {
                   "Logo": {
                     "Paths": [
@@ -1767,7 +1762,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Client": {
                   "Logo": {
                     "Paths": [
@@ -1792,7 +1787,7 @@
                 "PublishedUtc": null,
                 "CreatedUtc": null,
                 "Owner": null,
-                "Author": "admin",
+                "Author": "[js: parameters('AdminUsername')]",
                 "Client": {
                   "Logo": {
                     "Paths": [
