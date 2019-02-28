@@ -186,7 +186,7 @@ body:not(.left-sidebar-compact) {
 
         .chevron {
             position: absolute;
-            top: 33%;
+            top: 38%;
             left: 100%;
             margin-left: -25px;
         }
@@ -223,6 +223,9 @@ body:not(.left-sidebar-compact) {
 
                 > li {
                     line-height: 3em;
+                    width: $left-navigation-width;
+                    transition: width 0.2s ease-in-out;
+                    background-color: #EAEAEA;
 
                     &:first-child:after {
                         content: "";
@@ -273,6 +276,10 @@ body:not(.left-sidebar-compact) {
                         > span.title {
                             flex-grow: 1;
                             font-size: 14px;
+                            width: calc(100% - 48px - 45px);
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
                         }
                     }
 
@@ -479,7 +486,7 @@ body:not(.left-sidebar-compact) {
 
         .chevron {
             position: absolute;
-            top: 33%;
+            top: 38%;
             left: 100%;
             margin-left: -25px;
         }
@@ -517,6 +524,9 @@ body:not(.left-sidebar-compact) {
 
                 > li {
                     line-height: 3em;
+                    width: $left-navigation-width-when-compact - 1;
+                    transition: width 0.2s ease-in-out;
+                    background-color: #EAEAEA;
 
                     &:first-child > span.title:after {
                         content: "";
@@ -561,6 +571,10 @@ body:not(.left-sidebar-compact) {
                     > span.title {
                         flex-grow: 1;
                         font-size: 14px;
+                        width: calc(100% - 48px);
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
                     }
                 }
 
@@ -628,7 +642,7 @@ body:not(.left-sidebar-compact) {
                 > li {
                     overflow: hidden;
 
-                    span.title, span.icon {
+                    span.title {
                         display: none;
                     }
                 }
@@ -636,6 +650,7 @@ body:not(.left-sidebar-compact) {
                 > li.visible {
                     overflow: visible;
                     width: $left-navigation-width-when-compact + $left-navigation-width;
+                    transition: none;
 
                     span.title, span.icon {
                         display: block;
@@ -664,7 +679,7 @@ body:not(.left-sidebar-compact) {
                     display: flex;
 
                     .title {
-                        padding-left: 20px;
+                        padding: 0 20px;
 
                         &:hover {
                             background-color: $gray-100 !important;
@@ -677,7 +692,6 @@ body:not(.left-sidebar-compact) {
                         flex-shrink: 0;
                         font-size: 22px;
                         width: $left-navigation-width-when-compact;
-                        border-right: $border-content;
 
                         svg {
                             width: 35px;
@@ -688,6 +702,10 @@ body:not(.left-sidebar-compact) {
                         flex-grow: 1;
                         font-size: 14px;
                         font-weight: bold;
+                        width: calc(100% - 48px);
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
                     }
 
                     > span.title:after {
@@ -857,6 +875,7 @@ body:not(.left-sidebar-compact) {
         }
     }
 }
+
 // fixing a flickering that occurs on compact leftbar while icons load.
 html:not(.fontawesome-i2svg-complete) #left-nav ul.menu-admin > li > .item-label {
     background-color: $gray-100 !important;

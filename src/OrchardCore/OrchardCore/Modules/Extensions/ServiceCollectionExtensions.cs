@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -15,6 +15,7 @@ using Microsoft.Net.Http.Headers;
 using OrchardCore;
 using OrchardCore.Environment.Extensions;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Environment.Shell.Descriptor.Models;
 using OrchardCore.Modules;
 
@@ -131,10 +132,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.RequestPath = "";
                 options.FileProvider = fileProvider;
 
+                var shellConfiguration = serviceProvider.GetRequiredService<IShellConfiguration>();
+
+                var cacheControl = shellConfiguration.GetValue("StaticFileOptions:CacheControl", "public, max-age=2592000, s-max-age=31557600");
+
                 // Cache static files for a year as they are coming from embedded resources and should not vary
                 options.OnPrepareResponse = ctx =>
                 {
-                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "max-age=" + (int)TimeSpan.FromDays(365).TotalSeconds;
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = cacheControl;
                 };
 
                 app.UseStaticFiles(options);
@@ -153,13 +158,19 @@ namespace Microsoft.Extensions.DependencyInjection
                 var settings = serviceProvider.GetRequiredService<ShellSettings>();
 
                 var tenantName = settings.Name;
-                var tenantPrefix = "/" + settings.RequestUrlPrefix;
 
-                services.AddAntiforgery(options =>
-                {
-                    options.Cookie.Name = "orchantiforgery_" + tenantName;
-                    options.Cookie.Path = tenantPrefix;
-                });
+                // Re-register the antiforgery  services to be tenant-aware.
+                var collection = new ServiceCollection()
+                    .AddAntiforgery(options =>
+                    {
+                        options.Cookie.Name = "orchantiforgery_" + tenantName;
+
+                        // Don't set the cookie builder 'Path' so that it uses the 'IAuthenticationFeature' value
+                        // set by the pipeline and comming from the request 'PathBase' which already ends with the
+                        // tenant prefix but may also start by a path related e.g to a virtual folder.
+                    });
+
+                services.Add(collection);
             });
         }
 
@@ -198,9 +209,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 var options = serviceProvider.GetRequiredService<IOptions<ShellOptions>>();
 
                 var directory = Directory.CreateDirectory(Path.Combine(
-                options.Value.ShellsApplicationDataPath,
-                options.Value.ShellsContainerName,
-                settings.Name, "DataProtection-Keys"));
+                    options.Value.ShellsApplicationDataPath,
+                    options.Value.ShellsContainerName,
+                    settings.Name, "DataProtection-Keys"));
 
                 // Re-register the data protection services to be tenant-aware so that modules that internally
                 // rely on IDataProtector/IDataProtectionProvider automatically get an isolated instance that
