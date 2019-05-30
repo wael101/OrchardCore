@@ -9,7 +9,7 @@ For more information about the Liquid syntax, please refer to this site: <https:
 
 All outputs are encoded into HTML by default.
 This means that any HTML reserved chars will be converted to the corresponding HTML entities.
-If you need to render some raw HTML chars you can use the `Raw` filter.
+If you need to render some raw HTML chars you can use the `raw` filter.
 
 ## Content Item Filters
 
@@ -214,6 +214,26 @@ The following properties are available on the `User` object.
 | --------- | ---- |------------ |
 | `Identity.Name` | `admin` | The name of the authenticated user. |
 | `Identity.Claims` |  | The claims of the authenticated user. |
+
+
+#### User Filters
+##### has_permission filter
+checks if the User has permission clearance, optionally on a resource 
+```liquid
+{{ User | has_permission:"EditContent",Model.ContentItem }}
+```
+##### is_in_role filter
+checks if the user is in role
+```liquid
+{{ User | is_in_role:"Administrator" }}
+```
+##### has_claim filter
+checks if the user has a claim of the specified type
+```liquid
+{{ User | has_claim:"email_verified","true" }}
+{{ User | has_claim:"Permission","ManageSettings" }}
+```
+
 
 ### Site
 

@@ -57,7 +57,12 @@ namespace OrchardCore.Modules
                 using (scope)
                 {
                     // Register the shell context as a custom feature
-                    httpContext.Features.Set(shellContext);
+                    httpContext.Features.Set(new ShellContextFeature
+                    {
+                        ShellContext = shellContext,
+                        OriginalPath = httpContext.Request.Path,
+                        OriginalPathBase = httpContext.Request.PathBase
+                    });
 
                     if (!shellContext.IsActivated)
                     {
@@ -72,7 +77,6 @@ namespace OrchardCore.Modules
                             {
                                 using (var activatingScope = await _shellHost.GetScopeAsync(shellSettings))
                                 {
-
                                     var tenantEvents = activatingScope.ServiceProvider.GetServices<IModularTenantEvents>();
 
                                     foreach (var tenantEvent in tenantEvents)

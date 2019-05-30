@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using OrchardCore;
@@ -17,6 +18,7 @@ using OrchardCore.Environment.Extensions;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Environment.Shell.Descriptor.Models;
+using OrchardCore.Localization;
 using OrchardCore.Modules;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -62,6 +64,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // These services might be moved at a higher level if no components from OrchardCore needs them.
             services.AddLocalization();
+
+            // For performance, prevents the 'ResourceManagerStringLocalizer' from being used.
+            services.AddSingleton<IStringLocalizerFactory, NullStringLocalizerFactory>();
+
             services.AddWebEncoders();
 
             // ModularTenantRouterMiddleware which is configured with UseOrchardCore() calls UseRouter() which requires the routing services to be
@@ -71,6 +77,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IClock, Clock>();
             services.AddScoped<ILocalClock, LocalClock>();
+
+            services.AddTransient<ICalendarManager, DefaultCalendarManager>();
+            services.AddScoped<ICalendarSelector, DefaultCalendarSelector>();
 
             services.AddSingleton<IPoweredByMiddlewareOptions, PoweredByMiddlewareOptions>();
             services.AddTransient<IModularTenantRouteBuilder, ModularTenantRouteBuilder>();
@@ -95,7 +104,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.ApplicationServices.AddSingleton<IModuleNamesProvider, AssemblyAttributeModuleNamesProvider>();
             builder.ApplicationServices.AddSingleton<IApplicationContext, ModularApplicationContext>();
-            
+
             builder.ApplicationServices.AddExtensionManagerHost();
 
             builder.ConfigureServices(services =>
