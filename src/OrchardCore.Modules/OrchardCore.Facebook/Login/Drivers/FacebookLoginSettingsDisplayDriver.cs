@@ -40,7 +40,8 @@ namespace OrchardCore.Facebook.Login.Drivers
 
             return Initialize<FacebookLoginSettingsViewModel>("FacebookLoginSettings_Edit", model =>
             {
-                model.CallbackPath = settings.CallbackPath;
+                model.CallbackPath = settings.CallbackPath.Value;
+                model.SaveTokens = settings.SaveTokens;
             }).Location("Content:5").OnGroup(FacebookConstants.Features.Login);
         }
 
@@ -60,7 +61,8 @@ namespace OrchardCore.Facebook.Login.Drivers
                 if (context.Updater.ModelState.IsValid)
                 {
                     settings.CallbackPath = model.CallbackPath;
-                    await _shellHost.ReloadShellContextAsync(_shellSettings);
+                    settings.SaveTokens = model.SaveTokens;
+                    await _shellHost.ReleaseShellContextAsync(_shellSettings);
                 }
             }
             return await EditAsync(settings, context);

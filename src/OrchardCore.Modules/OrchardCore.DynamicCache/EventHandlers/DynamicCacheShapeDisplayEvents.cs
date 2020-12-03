@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Options;
+using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Implementation;
 using OrchardCore.Environment.Cache;
 
@@ -19,23 +21,27 @@ namespace OrchardCore.DynamicCache.EventHandlers
 
         private readonly IDynamicCacheService _dynamicCacheService;
         private readonly ICacheScopeManager _cacheScopeManager;
+        private readonly HtmlEncoder _htmlEncoder;
+        private readonly CacheOptions _cacheOptions;
 
-        public DynamicCacheShapeDisplayEvents(IDynamicCacheService dynamicCacheService, ICacheScopeManager cacheScopeManager)
+        public DynamicCacheShapeDisplayEvents(
+            IDynamicCacheService dynamicCacheService,
+            ICacheScopeManager cacheScopeManager,
+            HtmlEncoder htmlEncoder,
+            IOptions<CacheOptions> options)
         {
             _dynamicCacheService = dynamicCacheService;
             _cacheScopeManager = cacheScopeManager;
+            _htmlEncoder = htmlEncoder;
+            _cacheOptions = options.Value;
         }
 
         public async Task DisplayingAsync(ShapeDisplayContext context)
         {
-            // TODO: replace with configurable UI
-            var debugMode = false;
-
             // The shape has cache settings and no content yet
-            if (context.ShapeMetadata.IsCached && context.ChildContent == null)
+            if (context.Shape.Metadata.IsCached && context.ChildContent == null)
             {
-
-                var cacheContext = context.ShapeMetadata.Cache();
+                var cacheContext = context.Shape.Metadata.Cache();
                 _cacheScopeManager.EnterScope(cacheContext);
                 _openScopes[cacheContext.CacheId] = cacheContext;
 
@@ -48,16 +54,16 @@ namespace OrchardCore.DynamicCache.EventHandlers
                     _cached[cacheContext.CacheId] = cacheContext;
                     context.ChildContent = new HtmlString(cachedContent);
                 }
-                else if (debugMode)
+                else if (_cacheOptions.DebugMode)
                 {
-                    context.ShapeMetadata.Wrappers.Add("CachedShapeWrapper");
+                    context.Shape.Metadata.Wrappers.Add("CachedShapeWrapper");
                 }
             }
         }
 
         public async Task DisplayedAsync(ShapeDisplayContext context)
         {
-            var cacheContext = context.ShapeMetadata.Cache();
+            var cacheContext = context.Shape.Metadata.Cache();
 
             // If the shape is not configured to be cached, continue as usual
             if (cacheContext == null)
@@ -80,17 +86,21 @@ namespace OrchardCore.DynamicCache.EventHandlers
             if (!_cached.ContainsKey(cacheContext.CacheId) && context.ChildContent != null)
             {
                 // The content is pre-encoded in the cache so we don't have to do it every time it's rendered
-                using (var sw = new StringWriter())
+                using (var sb = StringBuilderPool.GetInstance())
                 {
-                    context.ChildContent.WriteTo(sw, HtmlEncoder.Default);
-                    await _dynamicCacheService.SetCachedValueAsync(cacheContext, sw.ToString());
+                    using (var sw = new StringWriter(sb.Builder))
+                    {
+                        context.ChildContent.WriteTo(sw, _htmlEncoder);
+                        await _dynamicCacheService.SetCachedValueAsync(cacheContext, sw.ToString());
+                        await sw.FlushAsync();
+                    }
                 }
             }
         }
 
         public Task DisplayingFinalizedAsync(ShapeDisplayContext context)
         {
-            var cacheContext = context.ShapeMetadata.Cache();
+            var cacheContext = context.Shape.Metadata.Cache();
 
             if (cacheContext != null && _openScopes.ContainsKey(cacheContext.CacheId))
             {

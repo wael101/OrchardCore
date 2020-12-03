@@ -3,44 +3,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using OrchardCore.DisplayManagement.Handlers;
+using OrchardCore.DisplayManagement.Notify;
 using OrchardCore.DisplayManagement.Views;
+using OrchardCore.Modules;
 using OrchardCore.Security.Services;
+using OrchardCore.Users.Handlers;
 using OrchardCore.Users.Models;
-using OrchardCore.Users.Services;
 using OrchardCore.Users.ViewModels;
 
 namespace OrchardCore.Users.Drivers
 {
     public class UserDisplayDriver : DisplayDriver<User>
     {
+        private const string AdministratorRole = "Administrator";
         private readonly UserManager<IUser> _userManager;
-        private readonly IUserService _userService;
         private readonly IRoleService _roleService;
-        private readonly IUserStore<IUser> _userStore;
-        private readonly IUserEmailStore<IUser> _userEmailStore;
         private readonly IUserRoleStore<IUser> _userRoleStore;
-        private readonly IStringLocalizer T;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotifier _notifier;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly ILogger _logger;
+        private readonly IStringLocalizer S;
+        private readonly IHtmlLocalizer H;
+
 
         public UserDisplayDriver(
             UserManager<IUser> userManager,
-            IUserService userService,
             IRoleService roleService,
-            IUserStore<IUser> userStore,
-            IUserEmailStore<IUser> userEmailStore,
             IUserRoleStore<IUser> userRoleStore,
+            IHttpContextAccessor httpContextAccessor,
+            INotifier notifier,
+            ILogger<UserDisplayDriver> logger,
+            IEnumerable<IUserEventHandler> handlers,
+            IAuthorizationService authorizationService,
+            IHtmlLocalizer<UserDisplayDriver> htmlLocalizer,
             IStringLocalizer<UserDisplayDriver> stringLocalizer)
         {
             _userManager = userManager;
-            _userService = userService;
             _roleService = roleService;
-            _userStore = userStore;
-            _userEmailStore = userEmailStore;
             _userRoleStore = userRoleStore;
-            T = stringLocalizer;
+            _httpContextAccessor = httpContextAccessor;
+            _notifier = notifier;
+            _authorizationService = authorizationService;
+            _logger = logger;
+            Handlers = handlers;
+            H = htmlLocalizer;
+            S = stringLocalizer;
         }
+
+        public IEnumerable<IUserEventHandler> Handlers { get; private set; }
 
         public override IDisplayResult Display(User user)
         {
@@ -58,62 +76,66 @@ namespace OrchardCore.Users.Drivers
                 var userRoleNames = await _userManager.GetRolesAsync(user);
                 var roles = roleNames.Select(x => new RoleViewModel { Role = x, IsSelected = userRoleNames.Contains(x, StringComparer.OrdinalIgnoreCase) }).ToArray();
 
-                model.Id = await _userManager.GetUserIdAsync(user);
-                model.UserName = await _userManager.GetUserNameAsync(user);
-                model.Email = await _userManager.GetEmailAsync(user);
                 model.Roles = roles;
                 model.EmailConfirmed = user.EmailConfirmed;
-            }).Location("Content:1"));
+                model.IsEnabled = user.IsEnabled;
+            })
+            .Location("Content:1.5")
+            .RenderWhen(async () => await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, Permissions.ManageUsers)));
         }
 
         public override async Task<IDisplayResult> UpdateAsync(User user, UpdateEditorContext context)
         {
+            if (!await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, Permissions.ManageUsers))
+            {
+                // When the user is only editing their profile never update this part of the user.
+                return await EditAsync(user, context);
+            }
+
             var model = new EditUserViewModel();
+            var httpContext = _httpContextAccessor.HttpContext;
 
             if (!await context.Updater.TryUpdateModelAsync(model, Prefix))
             {
                 return await EditAsync(user, context);
             }
 
-            model.UserName = model.UserName?.Trim();
-            model.Email = model.Email?.Trim();
-            user.EmailConfirmed = model.EmailConfirmed;
-
-            if (string.IsNullOrWhiteSpace(model.UserName))
+            var usersOfAdminRole = await _userManager.GetUsersInRoleAsync(AdministratorRole);
+            if (!model.IsEnabled && user.IsEnabled)
             {
-                context.Updater.ModelState.AddModelError("UserName", T["A user name is required."]);
-            }
-
-            if (string.IsNullOrWhiteSpace(model.Email))
-            {
-                context.Updater.ModelState.AddModelError("Email", T["An email is required."]);
-            }
-
-            await _userStore.SetUserNameAsync(user, model.UserName, default(CancellationToken));
-            await _userEmailStore.SetEmailAsync(user, model.Email, default(CancellationToken));
-
-            var userWithSameName = await _userStore.FindByNameAsync(_userManager.NormalizeKey(model.UserName), default(CancellationToken));
-            if (userWithSameName != null)
-            {
-                var userWithSameNameId = await _userStore.GetUserIdAsync(userWithSameName, default(CancellationToken));
-                if (userWithSameNameId != model.Id)
+                if (usersOfAdminRole.Count == 1 && usersOfAdminRole.First().UserName == user.UserName)
                 {
-                    context.Updater.ModelState.AddModelError(string.Empty, T["The user name is already used."]);
+                    _notifier.Warning(H["Cannot disable the only administrator."]);
+                }
+                else
+                {
+                    if (user.UserName != httpContext.User.Identity.Name)
+                    {
+                        user.IsEnabled = model.IsEnabled;
+                        var userContext = new UserContext(user);
+                        await Handlers.InvokeAsync((handler, context) => handler.DisabledAsync(userContext), userContext, _logger);
+                    }
+                    else
+                    {
+                        _notifier.Warning(H["Cannot disable current user."]);
+                    }
                 }
             }
-
-            var userWithSameEmail = await _userEmailStore.FindByEmailAsync(_userManager.NormalizeKey(model.Email), default(CancellationToken));
-            if (userWithSameEmail != null)
+            else if (model.IsEnabled && !user.IsEnabled)
             {
-                var userWithSameEmailId = await _userStore.GetUserIdAsync(userWithSameEmail, default(CancellationToken));
-                if (userWithSameEmailId != model.Id)
-                {
-                    context.Updater.ModelState.AddModelError(string.Empty, T["The email is already used."]);
-                }
+                user.IsEnabled = model.IsEnabled;
+                var userContext = new UserContext(user);
+                await Handlers.InvokeAsync((handler, context) => handler.EnabledAsync(userContext), userContext, _logger);
             }
 
             if (context.Updater.ModelState.IsValid)
             {
+                if (model.EmailConfirmed)
+                {
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    await _userManager.ConfirmEmailAsync(user, token);
+                }
+
                 var roleNames = model.Roles.Where(x => x.IsSelected).Select(x => x.Role).ToList();
 
                 if (context.IsNew)
@@ -121,7 +143,7 @@ namespace OrchardCore.Users.Drivers
                     // Add new roles
                     foreach (var role in roleNames)
                     {
-                        await _userRoleStore.AddToRoleAsync(user, _userManager.NormalizeKey(role), default(CancellationToken));
+                        await _userRoleStore.AddToRoleAsync(user, _userManager.NormalizeName(role), default(CancellationToken));
                     }
                 }
                 else
@@ -138,15 +160,24 @@ namespace OrchardCore.Users.Drivers
 
                     foreach (var role in rolesToRemove)
                     {
-                        await _userRoleStore.RemoveFromRoleAsync(user, _userManager.NormalizeKey(role), default(CancellationToken));
+                        // Make sure we always have at least one administrator account
+                        if (usersOfAdminRole.Count == 1 && usersOfAdminRole.First().UserName == user.UserName && role == AdministratorRole)
+                        {
+                            _notifier.Warning(H["Cannot remove administrator role from the only administrator."]);
+                            continue;
+                        }
+                        else
+                        {
+                            await _userRoleStore.RemoveFromRoleAsync(user, _userManager.NormalizeName(role), default(CancellationToken));
+                        }
                     }
 
                     // Add new roles
                     foreach (var role in roleNames)
                     {
-                        if (!await _userRoleStore.IsInRoleAsync(user, _userManager.NormalizeKey(role), default(CancellationToken)))
+                        if (!await _userRoleStore.IsInRoleAsync(user, _userManager.NormalizeName(role), default(CancellationToken)))
                         {
-                            await _userRoleStore.AddToRoleAsync(user, _userManager.NormalizeKey(role), default(CancellationToken));
+                            await _userRoleStore.AddToRoleAsync(user, _userManager.NormalizeName(role), default(CancellationToken));
                         }
                     }
                 }

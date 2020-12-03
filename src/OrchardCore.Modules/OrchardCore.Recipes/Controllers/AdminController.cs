@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
-using OrchardCore.Admin;
 using OrchardCore.DisplayManagement.Notify;
 using OrchardCore.Environment.Extensions;
 using OrchardCore.Environment.Shell;
@@ -18,9 +18,9 @@ using OrchardCore.Settings;
 
 namespace OrchardCore.Recipes.Controllers
 {
-    [Admin]
     public class AdminController : Controller
     {
+        private readonly IShellHost _shellHost;
         private readonly ShellSettings _shellSettings;
         private readonly IExtensionManager _extensionManager;
         private readonly IAuthorizationService _authorizationService;
@@ -28,11 +28,12 @@ namespace OrchardCore.Recipes.Controllers
         private readonly INotifier _notifier;
         private readonly IRecipeExecutor _recipeExecutor;
         private readonly ISiteService _siteService;
+        private readonly IHtmlLocalizer H;
 
         public AdminController(
+            IShellHost shellHost,
             ShellSettings shellSettings,
             ISiteService siteService,
-            IAdminThemeService adminThemeService,
             IExtensionManager extensionManager,
             IHtmlLocalizer<AdminController> localizer,
             IAuthorizationService authorizationService,
@@ -40,6 +41,7 @@ namespace OrchardCore.Recipes.Controllers
             IRecipeExecutor recipeExecutor,
             INotifier notifier)
         {
+            _shellHost = shellHost;
             _shellSettings = shellSettings;
             _siteService = siteService;
             _recipeExecutor = recipeExecutor;
@@ -47,17 +49,14 @@ namespace OrchardCore.Recipes.Controllers
             _authorizationService = authorizationService;
             _recipeHarvesters = recipeHarvesters;
             _notifier = notifier;
-
-            T = localizer;
+            H = localizer;
         }
-
-        public IHtmlLocalizer T { get; }
 
         public async Task<ActionResult> Index()
         {
             if (!await _authorizationService.AuthorizeAsync(User, StandardPermissions.SiteOwner))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var recipeCollections = await Task.WhenAll(_recipeHarvesters.Select(x => x.HarvestRecipesAsync()));
@@ -69,12 +68,13 @@ namespace OrchardCore.Recipes.Controllers
 
             var model = recipes.Select(recipe => new RecipeViewModel
             {
-                Name = recipe.DisplayName,
+                Name = recipe.Name,
+                DisplayName = recipe.DisplayName,
                 FileName = recipe.RecipeFileInfo.Name,
                 BasePath = recipe.BasePath,
                 Tags = recipe.Tags,
                 IsSetupRecipe = recipe.IsSetupRecipe,
-                Feature = features.FirstOrDefault(f=>recipe.BasePath.Contains(f.Extension.SubPath))?.Name ?? "Application",
+                Feature = features.FirstOrDefault(f => recipe.BasePath.Contains(f.Extension.SubPath))?.Name ?? "Application",
                 Description = recipe.Description
             }).ToArray();
 
@@ -86,7 +86,7 @@ namespace OrchardCore.Recipes.Controllers
         {
             if (!await _authorizationService.AuthorizeAsync(User, StandardPermissions.SiteOwner))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var recipeCollections = await Task.WhenAll(_recipeHarvesters.Select(x => x.HarvestRecipesAsync()));
@@ -96,7 +96,7 @@ namespace OrchardCore.Recipes.Controllers
 
             if (recipe == null)
             {
-                _notifier.Error(T["Recipe was not found"]);
+                _notifier.Error(H["Recipe was not found"]);
                 return RedirectToAction("Index");
             }
 
@@ -113,17 +113,19 @@ namespace OrchardCore.Recipes.Controllers
                 {
                     site.SiteName,
                     AdminUsername = User.Identity.Name,
+                    AdminUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                 },
                 CancellationToken.None);
             }
-
             finally
             {
                 // Don't lock the tenant if the recipe fails.
                 _shellSettings.State = TenantState.Running;
             }
 
-            _notifier.Success(T["The recipe '{0}' has been run successfully", recipe.Name]);
+            await _shellHost.ReleaseShellContextAsync(_shellSettings);
+
+            _notifier.Success(H["The recipe '{0}' has been run successfully", recipe.DisplayName]);
             return RedirectToAction("Index");
         }
     }

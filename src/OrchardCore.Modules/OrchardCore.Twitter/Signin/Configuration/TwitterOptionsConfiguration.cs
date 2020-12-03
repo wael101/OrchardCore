@@ -23,9 +23,8 @@ namespace OrchardCore.Twitter.Signin.Configuration
         private readonly ITwitterSettingsService _twitterService;
         private readonly ITwitterSigninService _twitterSigninService;
         private readonly IDataProtectionProvider _dataProtectionProvider;
-        private readonly ILogger<TwitterOptionsConfiguration> _logger;
+        private readonly ILogger _logger;
         private readonly string _tenantPrefix;
-
 
         public TwitterOptionsConfiguration(
             ITwitterSettingsService twitterService,
@@ -58,7 +57,7 @@ namespace OrchardCore.Twitter.Signin.Configuration
 
         public void Configure(string name, TwitterOptions options)
         {
-            if (!string.Equals(name, TwitterDefaults.AuthenticationScheme, StringComparison.Ordinal))
+            if (!string.Equals(name, TwitterDefaults.AuthenticationScheme))
             {
                 return;
             }
@@ -80,11 +79,12 @@ namespace OrchardCore.Twitter.Signin.Configuration
             options.RetrieveUserDetails = true;
             options.SignInScheme = "Identity.External";
             options.StateCookie.Path = _tenantPrefix;
+            options.SaveTokens = settings.Item2.SaveTokens;
         }
 
         public void Configure(TwitterOptions options) => Debug.Fail("This infrastructure method shouldn't be called.");
 
-        private async Task<Tuple<TwitterSettings,TwitterSigninSettings>> GetSettingsAsync()
+        private async Task<Tuple<TwitterSettings, TwitterSigninSettings>> GetSettingsAsync()
         {
             var settings = await _twitterService.GetSettingsAsync();
             if ((_twitterService.ValidateSettings(settings)).Any(result => result != ValidationResult.Success))

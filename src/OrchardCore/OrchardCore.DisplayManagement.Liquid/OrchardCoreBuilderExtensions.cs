@@ -22,8 +22,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.ConfigureServices(services =>
             {
                 services.TryAddEnumerable(
-                ServiceDescriptor.Transient<IConfigureOptions<LiquidViewOptions>,
-                LiquidViewOptionsSetup>());
+                    ServiceDescriptor.Transient<IConfigureOptions<LiquidViewOptions>,
+                    LiquidViewOptionsSetup>());
 
                 services.TryAddEnumerable(
                     ServiceDescriptor.Transient<IConfigureOptions<ShapeTemplateOptions>,
@@ -39,6 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 services.AddLiquidFilter<AppendVersionFilter>("append_version");
                 services.AddLiquidFilter<ResourceUrlFilter>("resource_url");
+                services.AddLiquidFilter<SanitizeHtmlFilter>("sanitize_html");
             });
 
             return builder;

@@ -1,26 +1,29 @@
 {
   "name": "orchardcore.apis.graphql",
   "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "A GraphiQL module for OrchardCore.",
   "dependencies": {
-    "graphiql": "0.13.0",
-    "graphql": "14.3.1",
-    "graphiql-explorer": "0.4.3",
-    "react": "16.8.6",
-    "react-dom": "16.8.6"
+    "graphiql": "1.1.0",
+    "graphiql-explorer": "0.6.2",
+    "graphql": "15.4.0",
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.3.3",
-    "ts-loader": "^6.0.2",
-    "css-loader": "^2.1.1",
-    "style-loader": "^0.23.1",
-    "null-loader": "^2.0.0",
-    "typescript": "^3.5.1",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "@babel/preset-typescript": "^7.12.7",
+    "css-loader": "^5.0.1",
+    "null-loader": "^4.0.1",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.11",
+    "typescript": "^4.1.2",
+    "webpack": "^4.4.42",
+    "webpack-cli": "^4.2.0"
   },
   "scripts": {
     "build": "webpack --mode production"

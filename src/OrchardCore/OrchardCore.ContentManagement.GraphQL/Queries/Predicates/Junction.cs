@@ -21,13 +21,25 @@ namespace OrchardCore.ContentManagement.GraphQL.Queries.Predicates
         /// </summary>
         protected abstract string EmptyExpression { get; }
 
+        public void SearchUsedAlias(IPredicateQuery predicateQuery)
+        {
+            if (_predicates.Count == 0) return;
+
+
+            for (var i = 0; i < _predicates.Count; i++)
+            {
+                _predicates[i].SearchUsedAlias(predicateQuery);
+            }
+
+        }
+
         public string ToSqlString(IPredicateQuery predicateQuery)
         {
             if (_predicates.Count == 0) return EmptyExpression;
 
             var sqlBuilder = new StringBuilder();
 
-            sqlBuilder.Append("(");
+            sqlBuilder.Append('(');
 
             for (var i = 0; i < _predicates.Count - 1; i++)
             {
@@ -37,7 +49,7 @@ namespace OrchardCore.ContentManagement.GraphQL.Queries.Predicates
 
             sqlBuilder.Append(_predicates[_predicates.Count - 1].ToSqlString(predicateQuery));
 
-            sqlBuilder.Append(")");
+            sqlBuilder.Append(')');
 
             return sqlBuilder.ToString();
         }

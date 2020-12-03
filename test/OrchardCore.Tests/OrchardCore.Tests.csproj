@@ -3,11 +3,15 @@
   <Import Project="..\..\src\OrchardCore.Build\Dependencies.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>$(AspNetCoreTargetFramework)</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>OrchardCore.Tests</AssemblyName>
     <PackageId>OrchardCore.Tests</PackageId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
@@ -28,6 +32,11 @@
     <None Remove="Localization\PoFiles\MultipleEntries.po" />
     <None Remove="Localization\PoFiles\PoeditHeader.po" />
     <None Remove="Localization\PoFiles\SimpleEntry.po" />
+    <None Remove="Recipes\RecipeFiles\recipe1.json" />
+    <None Remove="Recipes\RecipeFiles\recipe2.json" />
+    <None Remove="Recipes\RecipeFiles\recipe3.json" />
+    <None Remove="Recipes\RecipeFiles\recipe4.json" />
+    <None Remove="Recipes\RecipeFiles\recipe5.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +51,11 @@
     <EmbeddedResource Include="Localization\PoFiles\MultipleEntries.po" />
     <EmbeddedResource Include="Localization\PoFiles\PoeditHeader.po" />
     <EmbeddedResource Include="Localization\PoFiles\SimpleEntry.po" />
+    <EmbeddedResource Include="Recipes\RecipeFiles\recipe5.json" />
+    <EmbeddedResource Include="Recipes\RecipeFiles\recipe4.json" />
+    <EmbeddedResource Include="Recipes\RecipeFiles\recipe1.json" />
+    <EmbeddedResource Include="Recipes\RecipeFiles\recipe2.json" />
+    <EmbeddedResource Include="Recipes\RecipeFiles\recipe3.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,14 +72,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Microsoft.AspNetCore" />
+    <PackageReference Include="AngleSharp" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Moq" />
     <PackageReference Include="xunit" />
-    <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.analyzers" />
+    <PackageReference Include="xunit.runner.visualstudio" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="$(DotNetXunitVersion)" />
   </ItemGroup>
 
